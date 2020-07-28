@@ -4,18 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Root Config</title>
+  <title>Starbeat POC</title>
   <!--
     Remove this if you only support browsers that support async/await.
     This is needed by babel to share largeish helper code for compiling async/await in older
     browsers. More information at https://github.com/single-spa/create-single-spa/issues/112
   -->
-  <script src="https://cdn.jsdelivr.net/npm/regenerator-runtime@0.13.5/runtime.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/regenerator-runtime@0.13.5/runtime.min.js"></script> -->
   <!-- 
     This CSP allows any SSL-enabled host, but you should limit these directives further to increase your app's security.
     Learn more about CSP policies at https://content-security-policy.com/#directive
   -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: localhost:*; script-src 'unsafe-inline' https: localhost:*; connect-src https: localhost:* ws://localhost:*; style-src 'unsafe-inline' https:; object-src 'none';">
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: localhost:*; script-src 'unsafe-inline' https: localhost:*; connect-src https: localhost:* ws://localhost:*; style-src 'unsafe-inline' https:; object-src 'none';"> -->
   <meta name="importmap-type" content="systemjs-importmap" />
 
   <!-- Shared dependencies go into this import map. Your shared dependencies must be of one of the following formats:
@@ -29,7 +29,6 @@
   <script type="systemjs-importmap">
     {
       "imports": {
-        "sidenav": "http://localhost:4200/main.js",
         "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@5.5.0/lib/system/single-spa.min.js",
         "single-spa-layout": "https://unpkg.com/single-spa-layout@1.0.0-beta.2/dist/system/single-spa-layout.min.js"
       }
@@ -45,6 +44,8 @@
       "imports": {
         "@starbeat/root-config": "//localhost:9001/starbeat-root-config.js",
         "@starbeat/sidenav": "//localhost:4200/main.js",
+        "@starbeat/equipment": "http://localhost:4201/main.js",
+        "@starbeat/adapter": "http://localhost:4202/main.js",
         "single-spa-layout": "https://unpkg.com/single-spa-layout@1.0.0-beta.2/dist/system/single-spa-layout.min.js"
       }
     }
@@ -70,19 +71,53 @@
   <% } %>
   <template id="single-spa-layout">
     <single-spa-router>
-      <nav class="topnav">
+      <nav class="sidenav">
         <application name="@starbeat/sidenav"></application>
       </nav>
-      <div class="main-content mt-16">
+      <div id="main-content">
+        <route path="equipment">
+          <application name="@starbeat/equipment"></application>
+        </route>
+        <route path="adapter">
+          <application name="@starbeat/adapter"></application>
+        </route>
+        <route path="adapterequipment">
+          <application name="@starbeat/adapter"></application>
+          <application name="@starbeat/equipment"></application>
+        </route>
       </div>
     </single-spa-router>
   </template>
 </head>
 <body>
-  <main></main>
-  <script>
-    System.import('@starbeat/root-config');
-  </script>
+  <main>
+    <style>
+      body {
+        background-color: #f5f5f5;
+        margin: 0;
+      }
+      .sidenav {
+        width: 15%;
+        position: fixed;
+        z-index: 1;
+        height: 100vh;
+        padding: 0.75em;
+      }
+      .sidenav > div {
+        height: 100%;
+      }
+      #main-content {
+        background-color: #f5f5f5;
+        padding-left: 20%;
+        height: 100vh;
+      }
+    </style>
+    <script>
+      System.import('@starbeat/root-config');
+      // System.import('@starbeat/styleguide');
+    </script>
+  </main>
+
   <import-map-overrides-full show-when-local-storage="devtools" dev-libs></import-map-overrides-full>
 </body>
 </html>
